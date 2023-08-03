@@ -1,0 +1,6 @@
+*.csv
+*.jsonl
+*.pth
+!sample.csv
+simple_gnn
+word2vec_model*
