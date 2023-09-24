@@ -1,0 +1,75 @@
+attributes:
+  clusters:
+    web-development: [
+      "html", "css", "javascript", "php", "java", "python", "ruby", "django", "flask", "spring", "nodejs",
+    ]
+    cms: [
+      "wordpress", "joomla", "bitrix", "1c-bitrix", "craftcms", "drupal", "modx", "opencart", "prestashop",
+      "shopify", "typo3", "umbraco", "wix", "woocommerce", "magento"
+    ]
+    &data-science: [
+      "python", "r", "jupyter", "jupyter-notebook", "jupyterlab", "tensorflow", "pytorch", "pandas", "numpy",
+      "scikit-learn"
+    ]
+    devops: [
+      "docker", "kubernetes", "jenkins", "travis-ci", "github-actions", "aws", "azure", "gcp", "terraform",
+      "ansible", "cicd"
+    ]
+    system-programming: [
+      "c", "c++", "rust", "asm"
+    ]
+    system-administration: [
+      "linux", "shell", "bash", "systemd", "perl"
+    ]
+    machine-learning: [
+      "python", "tensorflow", "pytorch", "keras", "fastai", "scikit-learn", "opencv",
+      "pandas", "numpy", "scipy", "tensorboard", "jupyter", "jupyter-notebook",
+      "jupyterlab", "kaggle", "matplotlib", "llm", "gpt", "bert", "nlp", "nltk",
+    ]
+    mobile-development: [
+      "android", "ios", "kotlin", "swift"
+    ]
+    ios-development: [
+      "ios", "swift", "objective-c", "cocoa-touch", "xcode",
+    ]
+    android-development: [
+      "android", "kotlin", "java", "android-studio", "flutter", "react-native", "gradle", "kotlin-android",
+    ]
+    1c-development: [
+      "1c", "1c-bitrix", "1c-enterprise", "windows", "linux", "system-administration", "postgresql", "shell",
+    ]
+
+  technologies:
+    - php
+    - laravel
+    - dockerfile
+    - yaml
+
+rules:
+  - conditions:
+      node_exists: php
+      node_suggested: laravel-plugin
+    actions:
+      - increase_weight:
+          node: laravel
+          amount: 10
+  - conditions:
+      node_exists: dockerfile
+      node_suggested: yaml
+    actions:
+      - increase_weight:
+          node: docker
+          amount: 10
+      - increase_weight:
+          node: docker-compose
+          amount: 10
+  - conditions:
+      cluster_coverage: "data-science"
+      percentage: 70
+    actions:
+      - add_node:
+          node: "data-science"
+      - create_links:
+          source: "data-science"
+          targets:
+            <<: *data-science

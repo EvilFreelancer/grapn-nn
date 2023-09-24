@@ -1,5 +1,3 @@
-import json
-import csv
 from collections import defaultdict
 
 
@@ -20,31 +18,3 @@ def build_graph(text, tokenizer):
     edges = [[edge[0], edge[1], weight] for edge, weight in edge_weights.items()]
 
     return edges, len(token_ids_to_new_ids)
-
-
-def build_graph_dataset(input_csv_file, output_jsonl_file, tokenizer):
-    with open(input_csv_file, 'r') as file, open(output_jsonl_file, 'w') as outfile:
-        reader = csv.reader(file)
-        next(reader)  # Skip header row
-        for row in reader:
-            _, _, message, label, _ = row
-
-            # Skip empty messages
-            if len(message) < 1:
-                continue
-
-            # Build graph
-            graph, num_nodes = build_graph(message, tokenizer)
-
-            # Skip empty graphs
-            if len(graph) < 1:
-                continue
-
-            # Write graph to file
-            graph_data = {
-                'graph': graph,
-                'label': int(label == 'spam'),
-                'num_nodes': num_nodes,
-            }
-            json.dump(graph_data, outfile)
-            outfile.write('\n')

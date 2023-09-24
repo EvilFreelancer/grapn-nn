@@ -1,16 +1,16 @@
 import torch
 from transformers import BertTokenizerFast
 from torch_geometric.data import Data
-from simple_gnn import GCNSummarizer
+from simple_gnn import GCNSummarizer, GraphSAGESummarizer, GATSummarizer, MLPSummarizer
 from simple_gnn.utils.build_graph_dataset import build_graph
 
-#DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-DEVICE = torch.device('cpu')
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Load pre-trained model and tokenizer
-model = GCNSummarizer(300, 300).to(DEVICE)
-model.load_state_dict(torch.load("model.pth"))
+model = GCNSummarizer(1200, 800).to(DEVICE)
+model.load_state_dict(torch.load(model.file_path))
 tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
+
 
 def predict_spam(text):
     model.eval()
@@ -31,8 +31,9 @@ def predict_spam(text):
 
     return out.item()
 
-# text = "Not everybody know about wiki"
-text = "При этом, в gitflic, раннер зарегистрировался и получил Состояние \"Активный\", в поле агент, после очередной циклической регистрации, изменяется имя. После отключения ранера, в состояниях, висит как Активный."
+
+text = "Not everybody know about wiki"
+# text = "При этом, в gitflic, раннер зарегистрировался и получил Состояние \"Активный\", в поле агент, после очередной циклической регистрации, изменяется имя. После отключения ранера, в состояниях, висит как Активный."
 # text = "Обученная модель весит 711кб, если я правильно понял можно добавить ещё признаков и одной моделью определять насколько текст является скамом, относится ли он к рекламе прона, какую эмоцию несёт."
 # text = "БЕСПЛАТНО БОНУСКОЕ ПРЕДЛОЖЕНИЕ - См. Ниже * * * * Мы можем предоставить высочайшее качество, практически идентичные, приходи покупай у нас!"
 

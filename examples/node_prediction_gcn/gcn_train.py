@@ -8,12 +8,14 @@ from torch_geometric.utils import negative_sampling
 # Parse each graph and add to a global graph
 nodes = set()
 links = []
+weights = []
 
 with open('user_graphs.jsonl', 'r') as f:
     for line in f:
         data_dict = json.loads(line)
         nodes.update(node['id'] for node in data_dict['nodes'])
         links.extend((link['source'], link['target']) for link in data_dict['links'])
+        weights.extend(link['weight'] for link in data_dict['links'])
 
 # Create a mapping for node names to integer indices
 node_to_idx = {node: i for i, node in enumerate(nodes)}
@@ -23,11 +25,24 @@ idx_to_node = {i: node for node, i in node_to_idx.items()}
 edge_index = [[node_to_idx[source], node_to_idx[target]] for source, target in links]
 edge_index = torch.tensor(edge_index, dtype=torch.long)
 
+# Convert weights to a format suitable for PyTorch
+edge_weight = torch.tensor(weights, dtype=torch.float)
+
 # Create a PyTorch Geometric data object
-data = Data(x=torch.randn(len(nodes), 1), edge_index=edge_index.t().contiguous())
+data = Data(
+    x=torch.randn(len(nodes), 1),
+    edge_index=edge_index.t().contiguous(),
+    edge_attr=edge_weight
+)
 
 # Create GCN model and optimizer
-model = GCN(data.num_node_features, 32, 1)
+model = GCN(
+    in_channels=data.num_node_features,
+    hidden_channels=32,
+    out_channels=1,
+    num_layers=5,
+    activation=torch.nn.LeakyReLU(0.01)
+)
 optimizer = Adam(model.parameters(), lr=0.001)
 
 # Define Loss Function
@@ -38,7 +53,7 @@ criterion = torch.nn.BCEWithLogitsLoss()
 def train(data, model, optimizer):
     model.train()
     optimizer.zero_grad()
-    out = model(data.x, data.edge_index)
+    out = model(data.x, data.edge_index, data.edge_attr)
     pos_out = out[data.edge_index[0]]
     pos_loss = criterion(pos_out, torch.ones(data.edge_index.shape[1], ).view(-1, 1))
     # Negative sampling

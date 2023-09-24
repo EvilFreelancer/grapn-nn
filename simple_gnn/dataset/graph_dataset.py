@@ -23,6 +23,6 @@ class GraphDataset(Dataset):
         x_weights = torch.tensor(weights, dtype=torch.float)
         y = torch.tensor(graph_data['label'], dtype=torch.long)
 
-        data = Data(edge_index=x_edges, edge_attr=x_weights, y=y)
+        data = Data(edge_index=x_edges, edge_attr=x_weights, y=y, num_nodes=num_nodes)
 
         return data

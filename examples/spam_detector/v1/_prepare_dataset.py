@@ -1,14 +1,13 @@
-import json
-import csv
+from simple_gnn.utils.build_graph import build_graph
 from transformers import BertTokenizer
-from simple_gnn.utils.build_mpnn_graph import build_mpnn_graph
+import json, csv
 
 # Initialize Bert tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 # Build graph dataset
 input_csv_file = 'train_data_43590.csv'
-output_jsonl_file = 'mpnn_dataset.jsonl'
+output_jsonl_file = 'graph_dataset.jsonl'
 
 # Build graph dataset
 with open(input_csv_file, 'r') as file, open(output_jsonl_file, 'w') as outfile:
@@ -22,18 +21,17 @@ with open(input_csv_file, 'r') as file, open(output_jsonl_file, 'w') as outfile:
             continue
 
         # Build graph
-        x, edge_index, batch = build_mpnn_graph(message, tokenizer)
+        graph, num_nodes = build_graph(message, tokenizer)
 
         # Skip empty graphs
-        if len(edge_index) < 1:
+        if len(graph) < 1:
             continue
 
         # Write graph to file
         graph_data = {
-            'x': x,
-            'edge_index': edge_index,
-            'batch': batch,
-            'y': [int(label == 'spam')],
+            'graph': graph,
+            'label': int(label == 'spam'),
+            'num_nodes': num_nodes,
         }
         json.dump(graph_data, outfile)
         outfile.write('\n')
