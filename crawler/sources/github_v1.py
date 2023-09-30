@@ -69,17 +69,27 @@ def fetch_repos_for_user(username, end_cursor=None):
     return repos
 
 
-def build_graph_data_for_user(username, exclude_isolated=False):
+def build_graph_data_for_user_updated(username, exclude_isolated=False):
     repos = fetch_repos_for_user(username)
 
     tech_weights = defaultdict(float)
+    added_pairs = set()
 
     for repo in repos:
+        repo_languages = []
 
         # Programming languages and their weights
         for language_data in repo["languages"]["edges"]:
             language_name = language_data["node"]["name"].lower()
             tech_weights[language_name] += 0.5
+            repo_languages.append(language_name)
+
+        # Create links between languages within the same repo
+        for i in range(len(repo_languages)):
+            for j in range(i+1, len(repo_languages)):
+                link_pair = tuple(sorted([repo_languages[i], repo_languages[j]]))
+                if link_pair not in added_pairs:
+                    added_pairs.add(link_pair)
 
         # Topics
         topics = [topic_data["topic"]["name"].lower() for topic_data in repo["repositoryTopics"]["nodes"]]
@@ -95,9 +105,9 @@ def build_graph_data_for_user(username, exclude_isolated=False):
         #             tech_weights[package_name] += 0.5
 
     nodes = [{"id": tech, "weight": tech_weights[tech]} for tech in tech_weights.keys()]
-    links = []
-    added_pairs = set()
 
+    # Create links based on TECHNOLOGY_RELATIONS
+    links = [{"source": source, "target": target, "weight": 1} for source, target in added_pairs]
     for tech, related_techs in TECHNOLOGY_RELATIONS.items():
         for related_tech in related_techs:
             if tech in tech_weights and related_tech in tech_weights:

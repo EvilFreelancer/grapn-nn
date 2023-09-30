@@ -1,25 +1,48 @@
 TECHNOLOGY_RELATIONS = {
     "php": [
-        "laravel", "symfony", "composer", "dockerfile", "phpunit"
+        "laravel", "symfony", "composer", "dockerfile", "phpunit", "xdebug", "phpstorm", "xhprof", "phpspec",
+        "php-cs-fixer", "phpmd", "phpstan", "phpdoc", "phpcs", "phpcbf", "phpmetrics", "phploc", "phpcpd",
+    ],
+    "symfony": [
+        "php", "doctrine", "twig", "phpunit", "phpstan", "php-cs-fixer", "phpmd", "phpspec", "phpdoc",
+    ],
+    "wordpress": [
+        "php", "woocommerce", "woocommerce-plugin", "woocommerce-theme", "woocommerce-extension", "woocommerce-api",
     ],
     "laravel": [
         "mysql", "redis", "eloquent", "blade", "livewire", "laravel-mix", "laravel-echo", "laravel-valet",
-        "passport", "vue", "react", "lighthouse"
+        "passport", "vue", "react", "lighthouse", "laravel-plugin", "php"
+    ],
+    "blade": [
+        "php", "laravel"
     ],
     "lighthouse": [
         "graphql", "eloquent", "laravel", "api", "api-client"
     ],
     "eloquent": ["mysql", "sqlite", "mssql", "sqlserver", "oracle", "cockroachdb", "tidb", "sql"],
-    "python": ["django", "flask", "pandas", "numpy", "scikit-learn", "tensorflow", "pytorch", "dockerfile", "sql"],
-    "django": ["postgresql", "django-orm", "django-rest-framework", "dockerfile"],
-    "django-orm": ["postgresql", "mysql", "sqlite", "mssql", "sqlserver", "oracle", "cockroachdb", "tidb", "sql"],
+    "python": [
+        "django", "flask", "pandas", "numpy", "scikit-learn", "tensorflow", "pytorch", "dockerfile", "sql",
+        "conda", "pip", "virtualenv", "jupyter", "jupyter-notebook", "jupyterlab", "matplotlib", "seaborn", "plotly",
+        "poetry", "pipenv", "pyenv", "pyenv-virtualenv"
+    ],
+    "cython": ["python", "c", "c++"],
+    "flask": [
+        "python", "api", "sqlalchemy", "dockerfile", "flask-restful", "flask-socketio", "flask-graphql",
+        "flask-admin"
+    ],
+    "django": ["python", "postgresql", "django-orm", "django-rest-framework", "dockerfile"],
+    "django-orm": [
+        "python", "django", "orm", "postgresql", "mysql", "sqlite", "mssql", "sqlserver", "oracle", "cockroachdb",
+        "tidb", "sql"
+    ],
     "java": ["spring", "hibernate", "maven", "dockerfile"],
     "spring": ["mssql", "springboot", "thymeleaf"],
-    "ruby": ["rails"],
+    "ruby": ["rails", "ror"],
     "rails": ["sqlite", "activerecord"],
     "javascript": [
-        "nodejs", "react", "vue", "angular", "typescript", "dockerfile", "npm", "yarn", "jss"
+        "nodejs", "react", "vue", "angular", "typescript", "dockerfile", "npm", "yarn", "jss", "css", "html", "scss",
     ],
+    "sccs": ["css"],
     "jss": ["css"],
     "nodejs": ["express", "mongoose", "npm", "yarn", "dockerfile", "typescript", "typeorm"],
     "react": ["redux", "javascript", "dockerfile"],
@@ -31,14 +54,15 @@ TECHNOLOGY_RELATIONS = {
     "c": ["linux", "windows", "maxos", "bash", "c++", "dockerfile"],
     "c++": ["linux", "windows", "maxos", "qt", "boost", "dockerfile"],
     "rust": ["linux", "windows", "maxos", "cargo", "wasm", "dockerfile"],
+    "orm": ["gorm", "django-orm", "eloquent", "sqlalchemy", "doctrine", "typeorm"],
 
     # DevOps & Cloud
     "dockerfile": ["docker", "docker-compose"],
     "docker": ["kubernetes", "docker-compose", "dockerfile", "docker-swarm", "docker-hub"],
     "kubernetes": ["helm", "istio", "kubeflow", "k3s", "kubectl", "yaml"],
-    "aws": ["ec2", "s3", "lambda"],
-    "azure": ["azure-functions", "azure-web-apps"],
-    "gcp": ["gce", "gcs"],
+    "aws": ["ec2", "s3", "lambda", "cloudformation", "cloudfront", "cloudwatch", "route53", "dynamodb", "rds"],
+    "azure": ["azure-functions", "azure-web-apps", "azure-storage", "azure-devops", "azure-pipelines"],
+    "gcp": ["gce", "gcs", "gke", "gcf", "gcr", "gcs", "gcf", "gcr", "gcloud", "gcloud-sdk"],
     "cicd": ["jenkins", "travis-ci", "github-actions", "gitlab-ci", "circleci", "teamcity", "bamboo", "gocd"],
 
     # Data Science & ML
@@ -52,6 +76,9 @@ TECHNOLOGY_RELATIONS = {
     # System programming & OS
     "linux": ["bash", "zsh", "shell", "systemd", "debian", "ubuntu", "centos", "redhat", "archlinux", "gentoo"],
     "macos": ["zsh", "shell", "ios", "swift", "objective-c", "homebrew", "macos-catalina"],
+    "shell": [
+        "bash", "zsh", "linux", "macos", "windows", "powershell", "shell-script", "shell-commands", "npm", "yarn"
+    ],
 
     # Databases
     "databases": ["postgresql", "mysql", "sqlite", "mssql", "sqlserver", "oracle", "cockroachdb", "tidb", "sql"],
