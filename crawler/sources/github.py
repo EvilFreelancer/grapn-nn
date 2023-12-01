@@ -2,7 +2,8 @@ import requests
 import json
 import os
 from collections import defaultdict
-from crawler.mapping import TECHNOLOGY_RELATIONS, CLUSTERS
+from mapping.relations import RELATIONS
+from mapping.clusters import CLUSTERS
 
 GITHUB_GRAPHQL_URL = "https://api.github.com/graphql"
 HEADERS = {
@@ -84,7 +85,7 @@ def build_graph_data_for_user(username, exclude_isolated=False):
         # Topics
         topics = [topic_data["topic"]["name"].lower() for topic_data in repo["repositoryTopics"]["nodes"]]
         for topic in topics:
-            if topic in TECHNOLOGY_RELATIONS:
+            if topic in RELATIONS:
                 tech_weights[topic] += 0.1
 
         # Dependencies
@@ -98,7 +99,7 @@ def build_graph_data_for_user(username, exclude_isolated=False):
     links = []
     added_pairs = set()
 
-    for tech, related_techs in TECHNOLOGY_RELATIONS.items():
+    for tech, related_techs in RELATIONS.items():
         for related_tech in related_techs:
             if tech in tech_weights and related_tech in tech_weights:
                 # Formate pairs in a specific order for convenience

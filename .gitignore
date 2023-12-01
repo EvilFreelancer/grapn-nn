@@ -1,5 +1,9 @@
 /.idea/
 /venv/
-gh_output_graphs.jsonl
-gh_users.txt
 __pycache__
+*.json
+*.jsonl
+*.txt
+*.pyc
+!requirements.txt
+!requirements-dev.txt

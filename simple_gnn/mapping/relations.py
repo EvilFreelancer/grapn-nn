@@ -1,23 +1,34 @@
-TECHNOLOGY_RELATIONS = {
+RELATIONS = {
     "php": [
         "laravel", "symfony", "composer", "dockerfile", "phpunit", "xdebug", "phpstorm", "xhprof", "phpspec",
         "php-cs-fixer", "phpmd", "phpstan", "phpdoc", "phpcs", "phpcbf", "phpmetrics", "phploc", "phpcpd",
+        "codeception", "behat", "docker", "crm", "git"
     ],
     "symfony": [
-        "php", "doctrine", "twig", "phpunit", "phpstan", "php-cs-fixer", "phpmd", "phpspec", "phpdoc",
+        "php", "doctrine", "twig", "phpunit", "phpstan", "php-cs-fixer", "phpmd", "phpspec", "phpdoc", "api",
     ],
     "wordpress": [
         "php", "woocommerce", "woocommerce-plugin", "woocommerce-theme", "woocommerce-extension", "woocommerce-api",
     ],
     "laravel": [
         "mysql", "redis", "eloquent", "blade", "livewire", "laravel-mix", "laravel-echo", "laravel-valet",
-        "passport", "vue", "react", "lighthouse", "laravel-plugin", "php"
+        "passport", "vue", "react", "lighthouse", "laravel-plugin", "php", "phpunit", "postgresql", "sqlite", "mssql",
+        "rabbitmq", "crm", "phpsec"
+    ],
+    "codeception": [
+        "api", "rest api"
+    ],
+    "behat": [
+        "php", "laravel"
     ],
     "blade": [
         "php", "laravel"
     ],
     "lighthouse": [
         "graphql", "eloquent", "laravel", "api", "api-client"
+    ],
+    "git": [
+        "github", "gitlab", "bitbucket",
     ],
     "eloquent": ["mysql", "sqlite", "mssql", "sqlserver", "oracle", "cockroachdb", "tidb", "sql"],
     "python": [
@@ -58,7 +69,11 @@ TECHNOLOGY_RELATIONS = {
 
     # DevOps & Cloud
     "dockerfile": ["docker", "docker-compose"],
-    "docker": ["kubernetes", "docker-compose", "dockerfile", "docker-swarm", "docker-hub"],
+    "docker": [
+        "kubernetes", "docker-compose", "dockerfile", "docker-swarm", "docker-hub", "jenkins", "travis-ci",
+        "github-actions", "gocd", "gitlab-ci", "php", "python", "nodejs", "java", "ruby", "go", "rust", "c", "c++",
+        "linux", "windows", "github", "gitlab", "bitbucket", "aws", "azure", "gcp", "kubernetes", "helm", "istio",
+    ],
     "kubernetes": ["helm", "istio", "kubeflow", "k3s", "kubectl", "yaml"],
     "aws": ["ec2", "s3", "lambda", "cloudformation", "cloudfront", "cloudwatch", "route53", "dynamodb", "rds"],
     "azure": ["azure-functions", "azure-web-apps", "azure-storage", "azure-devops", "azure-pipelines"],
@@ -94,48 +109,12 @@ TECHNOLOGY_RELATIONS = {
 
     # Backend programming
     "api": [
+        "rest api", "restful api", "graphql api", "grpc api", "soap api", "json api", "xml api", "openapi",
         "rest", "restful", "graphql", "grpc", "soap", "json", "xml", "openapi", "swagger", "laravel", "django", "flask",
         "spring", "nodejs", "express", "gin", "beego", "php", "java", "python", "ruby"
     ],
     "api-client": [
         "rest", "rest", "graphql", "grpc", "soap", "json", "xml", "openapi", "swagger", "laravel", "django",
         "flask"
-    ],
-
-}
-CLUSTERS = {
-    "devops": [
-        "docker", "kubernetes", "jenkins", "travis-ci", "github-actions", "aws", "azure", "gcp", "terraform",
-        "ansible", "cicd"
-    ],
-    "data-science": [
-        "python", "r", "jupyter", "jupyter-notebook", "jupyterlab", "tensorflow", "pytorch", "pandas", "numpy",
-        "scikit-learn"
-    ],
-    "system-programming": [
-        "c", "c++", "rust", "asm"
-    ],
-    "system-administration": [
-        "linux", "shell", "bash", "systemd", "perl"
-    ],
-    "machine-learning": [
-        "data-science", "python", "tensorflow", "pytorch", "keras", "fastai", "scikit-learn", "opencv",
-        "pandas", "numpy", "scipy", "tensorflowjs", "tensorboard", "jupyter", "jupyter-notebook",
-        "jupyterlab", "kaggle", "matplotlib", "seaborn", "plotly", "bokeh", "dash", "streamlit", "mlflow",
-        "pycaret", "xgboost", "lightgbm", "catboost", "h2o", "shap", "eli5", "lime", "scikit-optimize",
-        "hyperopt", "optuna", "ml-agents", "ray", "horovod", "pytorch-lightning", "pytorch-ignite",
-        "llm", "pytorch-geometric", "pytorch-forecasting", "pytorch-tabnet", "pytorch3d", "pytorchvideo",
-    ],
-    "web-development": [
-        "html", "css", "javascript", "php", "java", "python", "ruby", "django", "flask", "spring", "nodejs",
-    ],
-    "ios-development": [
-        "ios", "swift", "objective-c", "cocoa-touch", "xcode",
-    ],
-    "android-development": [
-        "android", "kotlin", "java", "android-studio", "flutter", "react-native", "gradle", "kotlin-android",
-    ],
-    "1c-development": [
-        "1c", "1c-bitrix", "1c-enterprise", "windows", "linux", "system-administration", "postgresql", "shell",
     ],
 }

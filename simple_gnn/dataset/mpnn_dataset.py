@@ -19,7 +19,4 @@ class MPNNDataset(Dataset):
         batch = torch.tensor(item['batch'], dtype=torch.long)
         y = torch.tensor(item['y'], dtype=torch.float)
 
-        print(len(x), len(edge_index), len(batch), len(y))
-        exit()
-
         return Data(x=x, edge_index=edge_index.t().contiguous(), batch=batch, y=y)
