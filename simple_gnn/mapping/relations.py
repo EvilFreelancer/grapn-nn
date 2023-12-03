@@ -5,15 +5,21 @@ RELATIONS = {
         "codeception", "behat", "docker", "crm", "git"
     ],
     "symfony": [
-        "php", "doctrine", "twig", "phpunit", "phpstan", "php-cs-fixer", "phpmd", "phpspec", "phpdoc", "api",
+        "php", "api",
+        "doctrine", "mysql", "redis", "postgresql", "sqlite", "mssql", "rabbitmq",
+        "twig",
     ],
     "wordpress": [
-        "php", "woocommerce", "woocommerce-plugin", "woocommerce-theme", "woocommerce-extension", "woocommerce-api",
+        "php",
+        "woocommerce", "woocommerce-plugin", "woocommerce-theme", "woocommerce-extension", "woocommerce-api",
+        "cms"
     ],
     "laravel": [
-        "mysql", "redis", "eloquent", "blade", "livewire", "laravel-mix", "laravel-echo", "laravel-valet",
-        "passport", "vue", "react", "lighthouse", "laravel-plugin", "php", "phpunit", "postgresql", "sqlite", "mssql",
-        "rabbitmq", "crm", "phpsec"
+        "php", "api",
+        "eloquent", "mysql", "redis", "postgresql", "sqlite", "mssql", "rabbitmq",
+        "blade", "livewire", "laravel-mix", "laravel-echo", "laravel-valet", "passport",
+        "lighthouse", "laravel-plugin", "octbercms", "laravel-nova", "laravel-horizon", "laravel-scout",
+        "vue.js", "react.js"
     ],
     "codeception": [
         "api", "rest api"
@@ -25,7 +31,7 @@ RELATIONS = {
         "php", "laravel"
     ],
     "lighthouse": [
-        "graphql", "eloquent", "laravel", "api", "api-client"
+        "graphql", "eloquent", "laravel", "api",
     ],
     "git": [
         "github", "gitlab", "bitbucket",
@@ -51,16 +57,18 @@ RELATIONS = {
     "ruby": ["rails", "ror"],
     "rails": ["sqlite", "activerecord"],
     "javascript": [
-        "nodejs", "react", "vue", "angular", "typescript", "dockerfile", "npm", "yarn", "jss", "css", "html", "scss",
+        "nodejs", "react.js", "vue.js", "angular", "typescript", "dockerfile", "npm", "yarn", "jss", "css", "html",
+        "scss",
     ],
+    "vue.js": ["bootstrap", "vuetify", "quasar", "nuxt.js", "typescript", "dockerfile"],
     "sccs": ["css"],
     "jss": ["css"],
     "nodejs": ["express", "mongoose", "npm", "yarn", "dockerfile", "typescript", "typeorm"],
-    "react": ["redux", "javascript", "dockerfile"],
+    "react.js": ["redux", "javascript", "dockerfile"],
     "go": ["gin", "beego", "echo", "gorm", "grpc", "golang", "dockerfile"],
     "gorm": ["mysql", "postgresql", "sqlite", "mssql", "sqlserver", "oracle", "cockroachdb", "tidb", "sql"],
     "html": ["css", "javascript"],
-    "typescript": ["angular", "react", "vue", "webpack", "npm", "yarn", "dockerfile", "sql", "dockerfile"],
+    "typescript": ["angular", "react.js", "vue.js", "webpack", "npm", "yarn", "dockerfile", "sql", "dockerfile"],
     "css": ["scss", "sass", "less", "bootstrap"],
     "c": ["linux", "windows", "maxos", "bash", "c++", "dockerfile"],
     "c++": ["linux", "windows", "maxos", "qt", "boost", "dockerfile"],
