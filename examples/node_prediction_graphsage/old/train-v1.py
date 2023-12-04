@@ -8,7 +8,7 @@ from torch.optim import Adam, AdamW
 import torch.nn.functional as F
 
 from simple_gnn.graph.generate_subgraphs import generate_subgraphs
-from simple_gnn.model import GraphSAGE
+from simple_gnn.model import GraphSAGE, GCN, GAT
 
 # Load dataset from file
 with open('large_data.json', 'r') as f:
@@ -32,7 +32,7 @@ large_dataset.cuda()
 # Load subgraphs from file, or generate them if file does not exist
 if not os.path.isfile('subgraphs.json'):
     # Generate subgraphs based on the dataset
-    subgraphs = generate_subgraphs(graph_data, num_subgraphs=2000, min_nodes=3, max_nodes=15)
+    subgraphs = generate_subgraphs(graph_data, num_subgraphs=500, min_nodes=3, max_nodes=15)
     with open('subgraphs.json', 'w') as f:
         json.dump(subgraphs, f)
 else:
@@ -71,12 +71,12 @@ train_dataset = dataset
 # test_dataset = dataset[num_train + num_val:]
 
 # Create a model object
-model = GraphSAGE(large_dataset.num_node_features, 2, large_dataset.num_node_features)
+model = GAT(large_dataset.num_node_features, 64, large_dataset.num_node_features)
 model.cuda()
 model.train()
 
 # Train a model
-optimizer = Adam(model.parameters(), lr=0.0001, weight_decay=1e-5)
+optimizer = Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 
 torch.autograd.set_detect_anomaly(True)
 
@@ -129,8 +129,8 @@ def train(subgraph):
     target_embedding = model(subgraph_tmp.x, subgraph.edge_index)
 
     # Чуть подкорректируем векторы, чтобы они совпадали
-    if output_embedding[edge_to_rm_id] < target_embedding[edge_to_rm_id]:
-        #print(">>>>>>>>> yes")
+    if output_embedding[edge_to_rm_id] != target_embedding[edge_to_rm_id]:
+        print(">>>>>>>>> yes")
         #print(node_to_remove, node_index[node_to_remove], edge_to_remove, edge_to_rm_id)
         output_embedding[edge_to_rm_id] = target_embedding[edge_to_rm_id]
         #target_embedding[edge_to_rm_id] += 0.0001
@@ -166,12 +166,12 @@ def train(subgraph):
 
 # Train a model
 from tqdm import tqdm
-for epoch in tqdm(range(2), 'Epoch'):
-    for step in tqdm(range(len(train_dataset)), 'Step '):
+for epoch in range(2):
+    for step in range(len(train_dataset)):
         subgraph = train_dataset[step]
         min_loss = loss = train(subgraph)
-        #print(f"Epoch: {epoch} Step: {step} Loss: {loss}")
-    print(f"Epoch: {epoch}")
+        print(f"Epoch: {epoch} Step: {step} Loss: {loss}")
+    #print(f"Epoch: {epoch}")
 
 # Save model to file
 torch.save(model.state_dict(), 'model.pth')

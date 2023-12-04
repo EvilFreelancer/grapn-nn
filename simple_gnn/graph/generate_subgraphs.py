@@ -8,15 +8,18 @@ def generate_subgraphs(dataset, num_subgraphs=5, min_nodes=2, max_nodes=5):
         while len(selected_nodes) < random.randint(min_nodes, max_nodes):
             if selected_nodes:
                 new_node = random.choice(
-                    [link['target'] for link in dataset['links'] if link['source'] in {node['id'] for node in selected_nodes}] +
-                    [link['source'] for link in dataset['links'] if link['target'] in {node['id'] for node in selected_nodes}]
+                    [link['target'] for link in dataset['links'] if
+                     link['source'] in {node['id'] for node in selected_nodes}] +
+                    [link['source'] for link in dataset['links'] if
+                     link['target'] in {node['id'] for node in selected_nodes}]
                 )
             else:
                 new_node = random.choice(dataset['nodes'])['id']
             if new_node not in {node['id'] for node in selected_nodes}:
                 selected_nodes.append({'id': new_node})
         selected_node_ids = {node['id'] for node in selected_nodes}
-        selected_links = [link for link in dataset['links'] if link['source'] in selected_node_ids and link['target'] in selected_node_ids]
+        selected_links = [link for link in dataset['links'] if
+                          link['source'] in selected_node_ids and link['target'] in selected_node_ids]
         subgraphs.append({'nodes': selected_nodes, 'links': selected_links})
     return subgraphs
 

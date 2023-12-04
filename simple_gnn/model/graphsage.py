@@ -15,12 +15,8 @@ class GraphSAGE(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
 
         self.convs.append(SAGEConv(in_channels, hidden_channels))
-
-        # Hidden layers
         for _ in range(num_layers - 2):  # Subtract 2 to account for the first and last layers
             self.convs.append(SAGEConv(hidden_channels, hidden_channels))
-
-        # Last layer
         self.convs.append(SAGEConv(hidden_channels, out_channels))
 
         # Edge predictor

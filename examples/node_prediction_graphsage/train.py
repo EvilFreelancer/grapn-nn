@@ -8,7 +8,7 @@ from torch.optim import Adam, AdamW
 import torch.nn.functional as F
 
 from simple_gnn.graph.generate_subgraphs import generate_subgraphs
-from simple_gnn.model import GraphSAGE
+from simple_gnn.model import GraphSAGE, GCN, GAT
 import numpy as np
 
 torch.autograd.set_detect_anomaly(True)
@@ -37,7 +37,7 @@ large_dataset.cuda()
 # Load subgraphs from file, or generate them if file does not exist
 if not os.path.isfile('subgraphs.json'):
     # Generate subgraphs based on the dataset
-    subgraphs = generate_subgraphs(graph_data, num_subgraphs=200, min_nodes=3, max_nodes=10)
+    subgraphs = generate_subgraphs(graph_data, num_subgraphs=1000, min_nodes=3, max_nodes=15)
     with open('subgraphs.json', 'w') as f:
         json.dump(subgraphs, f)
 else:
@@ -57,9 +57,23 @@ for i in range(len(subgraphs)):
     # Convert to PyTorch Geometric format
     user_edge_index = torch.tensor(user_edge_index, dtype=torch.long).t().contiguous()
 
+    # Convert subgraphs nodes of the small graph
+    user_node_index = []
+    for link in subgraphs[i]['nodes']:
+        node_idx = node_mapping.get(link['id'])
+        if node_idx is not None:
+            user_node_index.append(node_idx)
+    # Extract features of the subgraph nodes from the large graph
+    user_node_indices = large_dataset.x[user_node_index]
+
+    # Make a mask for the subgraph nodes
+    user_mask = torch.zeros_like(large_dataset.x)
+    for idx in user_node_index:
+        user_mask[idx] = 1
+    masked_features = large_dataset.x * user_mask
+
     # Create a dataset from the subgraph using the same features and labels as the original dataset
-    user_data = Data(x=large_dataset.x, edge_index=user_edge_index, y=labels)
-    # user_data.cuda()
+    user_data = Data(x=masked_features, edge_index=user_edge_index, y=labels)
 
     dataset.append(user_data)
 
@@ -76,12 +90,12 @@ train_dataset = dataset
 # test_dataset = dataset[num_train + num_val:]
 
 # Create a model object
-model = GraphSAGE(large_dataset.num_node_features, 2, large_dataset.num_node_features)
+model = GraphSAGE(large_dataset.num_node_features, 64, large_dataset.num_node_features)
 model.cuda()
 model.train()
 
 # Train a model
-optimizer = Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
+optimizer = Adam(model.parameters(), lr=0.0001, weight_decay=1e-5)
 
 
 # Обновление функции обучения
@@ -123,7 +137,7 @@ def common_neighbors(edge_index, num_nodes):
     return neighbors
 
 
-def generate_negative_samples(edge_index, num_nodes, num_neg_samples, max_attempts=10000):
+def generate_negative_samples(edge_index, num_nodes, num_neg_samples, max_attempts=1000):
     neighbors = common_neighbors(edge_index, num_nodes)
     negative_samples = []
     attempts = 0
@@ -150,17 +164,19 @@ def create_edge_samples(subgraph):
     positive_edges = subgraph.edge_index.t().tolist()
 
     # Отрицательные примеры - отсутствующие рёбра
-    num_neg_samples = len(positive_edges)
+    num_neg_samples = len(positive_edges) * 2
     negative_edges = generate_negative_samples(subgraph.edge_index, subgraph.num_nodes, num_neg_samples)
 
     return positive_edges, negative_edges
 
 
 # Обучение модели
-for epoch in range(2):
+for epoch in range(10):
     # total_loss = 0
     for subgraph in train_dataset:
         positive_edges, negative_edges = create_edge_samples(subgraph)
+        if len(negative_edges) == 0:
+            continue
         loss = train(model, optimizer, subgraph, positive_edges, negative_edges)
         # total_loss += loss
         print(f"Epoch: {epoch}, Loss: {loss}")
