@@ -9,6 +9,8 @@ from simple_gnn.model import GraphSAGE, GCN, GAT
 
 # Load dataset
 large_dataset = torch.load('large_dataset.pth')
+node_mapping = large_dataset.node_mapping
+node_index = large_dataset.node_index
 
 # Load model
 model = GraphSAGE(large_dataset.num_node_features, 64, large_dataset.num_node_features)
@@ -23,15 +25,6 @@ args = parser.parse_args()
 # Loading test Graph for prediction
 with open(args.user_json, 'r') as f:
     user_graph_data = json.load(f)
-
-# Load dataset from file
-with open('large_data.json', 'r') as f:
-    graph_data = json.load(f)
-
-# Extract list of nodes and convert it to a dictionary for fast search
-node_list = [node['id'] for node in graph_data['nodes']]
-node_mapping = {node_id: i for i, node_id in enumerate(node_list)}
-node_index = {index: node for node, index in node_mapping.items()}
 
 # Convert subgraphs edges of the small graph
 user_edge_index = []
@@ -100,6 +93,7 @@ edge_probabilities.sort(key=lambda x: x[1], reverse=True)
 
 
 # Вывести топ наиболее вероятных связей
-for i, (edge, prob) in enumerate(edge_probabilities[:30]):
+for i, (edge, prob) in enumerate(edge_probabilities[:10]):
     nodes = [node_index[edge[0]], node_index[edge[1]]]
+    #print(f"| [{edge[0]}] {nodes[0]} | [{edge[1]}] {nodes[1]} | {prob} |")
     print(f"Связь: [{edge[0]:3}: {nodes[0]:15}] <=> [{edge[1]:3}: {nodes[1]:15}] с вероятностью {prob}")

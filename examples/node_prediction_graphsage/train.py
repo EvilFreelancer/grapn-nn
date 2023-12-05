@@ -30,7 +30,7 @@ edge_index = torch.tensor(edge_index, dtype=torch.long).t().contiguous()
 features = torch.randn(len(node_list), 1)
 labels = torch.tensor(list(range(len(graph_data['nodes']))), dtype=torch.long)
 
-large_dataset = Data(x=features, edge_index=edge_index, y=labels)
+large_dataset = Data(x=features, edge_index=edge_index, y=labels, node_mapping=node_mapping, node_index=node_index)
 torch.save(large_dataset, 'large_dataset.pth')
 large_dataset.cuda()
 
@@ -54,7 +54,6 @@ for i in range(len(subgraphs)):
         # Add edge only if both nodes are on the subgraph
         if source_idx is not None and target_idx is not None:
             user_edge_index.append([source_idx, target_idx])
-    # Convert to PyTorch Geometric format
     user_edge_index = torch.tensor(user_edge_index, dtype=torch.long).t().contiguous()
 
     # Convert subgraphs nodes of the small graph
@@ -63,7 +62,6 @@ for i in range(len(subgraphs)):
         node_idx = node_mapping.get(link['id'])
         if node_idx is not None:
             user_node_index.append(node_idx)
-    # Extract features of the subgraph nodes from the large graph
     user_node_indices = large_dataset.x[user_node_index]
 
     # Make a mask for the subgraph nodes
@@ -94,7 +92,7 @@ model = GraphSAGE(large_dataset.num_node_features, 64, large_dataset.num_node_fe
 model.cuda()
 model.train()
 
-# Train a model
+# Init optimizer
 optimizer = Adam(model.parameters(), lr=0.0001, weight_decay=1e-5)
 
 
@@ -113,12 +111,11 @@ def train(model, optimizer, subgraph, positive_edges, negative_edges):
     # Убедимся, что edges имеет правильный тип данных
     edges = torch.cat([torch.tensor(positive_edges), torch.tensor(negative_edges)], dim=0).to(subgraph.x.device).long()
 
-    # Функция для создания эмбеддингов рёбер
-    def edge_embeddings(edges):
-        return torch.cat([node_embeddings[edges[:, 0]], node_embeddings[edges[:, 1]]], dim=1)
+    # Создаём эмбеддинги рёбер
+    edge_embeddings = torch.cat([node_embeddings[edges[:, 0]], node_embeddings[edges[:, 1]]], dim=1)
 
     # Предсказание вероятности наличия связи
-    predictions = torch.sigmoid(model.edge_predictor(edge_embeddings(edges))).squeeze()
+    predictions = torch.sigmoid(model.edge_predictor(edge_embeddings)).squeeze()
 
     # Вычисление потерь и обновление параметров модели
     loss = F.binary_cross_entropy(predictions, labels)
@@ -158,28 +155,27 @@ def generate_negative_samples(edge_index, num_nodes, num_neg_samples, max_attemp
     return negative_samples
 
 
-# Создание положительных и отрицательных примеров
-def create_edge_samples(subgraph):
-    # Положительные примеры - существующие рёбра
-    positive_edges = subgraph.edge_index.t().tolist()
-
-    # Отрицательные примеры - отсутствующие рёбра
-    num_neg_samples = len(positive_edges) * 2
-    negative_edges = generate_negative_samples(subgraph.edge_index, subgraph.num_nodes, num_neg_samples)
-
-    return positive_edges, negative_edges
-
-
-# Обучение модели
-for epoch in range(10):
-    # total_loss = 0
+# Model training
+loss_values = []
+for epoch in range(2):
     for subgraph in train_dataset:
-        positive_edges, negative_edges = create_edge_samples(subgraph)
+        positive_edges = subgraph.edge_index.t().tolist()
+        negative_edges = generate_negative_samples(subgraph.edge_index, subgraph.num_nodes, len(positive_edges))
         if len(negative_edges) == 0:
             continue
         loss = train(model, optimizer, subgraph, positive_edges, negative_edges)
-        # total_loss += loss
+        loss_values.append(loss)
         print(f"Epoch: {epoch}, Loss: {loss}")
 
 # Save model to file
 torch.save(model.state_dict(), 'model.pth')
+
+#import matplotlib.pyplot as plt
+#plt.figure(figsize=(10, 5))
+#plt.plot(loss_values, label='Training Loss')
+#plt.xlabel('Iterations')
+#plt.ylabel('Loss')
+#plt.title('GAT - Training Loss Over Time')
+#plt.legend()
+#plt.grid(True)
+#plt.savefig('training_loss.png')
