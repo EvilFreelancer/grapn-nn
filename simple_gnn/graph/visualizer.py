@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def visualize(data, render=False):
+def visualize(data, render=False, figsize=(30, 30)):
     """Draw a graph with improved positioning for isolated nodes."""
     G = nx.Graph()
 
@@ -34,13 +34,13 @@ def visualize(data, render=False):
     #     pos.update(border_positions)
 
     # Draw the graph
-    plt.figure(figsize=(30, 30))
+    plt.figure(figsize=figsize)
     nx.draw_networkx_nodes(G, pos, nodelist=connected_nodes, node_size=500)
     nx.draw_networkx_nodes(G, pos, nodelist=isolated_nodes, node_size=500, node_color='lightblue', node_shape='s')
     nx.draw_networkx_labels(G, pos, font_size=10)
-    edge_widths = [d["weight"] / 10 for _, _, d in G.edges(data=True)]
+    edge_widths = [d["weight"] * 2 for _, _, d in G.edges(data=True)]
     edge_labels = {(u, v): round(d["weight"], 1) for u, v, d in G.edges(data=True)}
-    nx.draw_networkx_edges(G, pos, width=edge_widths, alpha=0.1)
+    nx.draw_networkx_edges(G, pos, width=edge_widths, alpha=0.9)
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=0)
 
     plt.axis("off")
