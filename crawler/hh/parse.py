@@ -29,3 +29,5 @@ for fl in os.listdir("./docs/pagination/"):
         jsonVocObj = json.loads(data)
         f.write(json.dumps(jsonVocObj, ensure_ascii=False, sort_keys=True, indent=2))
         f.close()
+
+        time.sleep(0.25)

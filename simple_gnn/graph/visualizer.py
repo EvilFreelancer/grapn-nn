@@ -3,9 +3,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def visualize(data, render=False, figsize=(30, 30)):
+def visualize(data, render=False, figsize=(30, 30), weight_scale=10):
     """Draw a graph with improved positioning for isolated nodes."""
     G = nx.Graph()
+
+    connected_techs = set()
+    for link in data['links']:
+        connected_techs.add(link["source"])
+        connected_techs.add(link["target"])
+    data['nodes'] = [node for node in data['nodes'] if node["id"] in connected_techs]
 
     # Add nodes and edges to the graph
     for node in data["nodes"]:
@@ -24,21 +30,15 @@ def visualize(data, render=False, figsize=(30, 30)):
     pos = nx.spring_layout(G)
 
     # If there are isolated nodes, position them in a circle around the graph
-    # if isolated_nodes:
-    #     border_positions = {}
-    #     border_angle = 2 * 3.141592653589793 / len(isolated_nodes)
-    #     radius = 1.2  # To place isolated nodes outside the main cluster
-    #     for index, node in enumerate(isolated_nodes):
-    #         angle = index * border_angle
-    #         border_positions[node] = (radius * np.cos(angle), radius * np.sin(angle))
-    #     pos.update(border_positions)
+    if isolated_nodes:
+        G.remove_nodes_from(list(nx.isolates(G)))
 
     # Draw the graph
     plt.figure(figsize=figsize)
     nx.draw_networkx_nodes(G, pos, nodelist=connected_nodes, node_size=500)
     nx.draw_networkx_nodes(G, pos, nodelist=isolated_nodes, node_size=500, node_color='lightblue', node_shape='s')
     nx.draw_networkx_labels(G, pos, font_size=10)
-    edge_widths = [d["weight"] * 2 for _, _, d in G.edges(data=True)]
+    edge_widths = [d["weight"] * weight_scale for _, _, d in G.edges(data=True)]
     edge_labels = {(u, v): round(d["weight"], 1) for u, v, d in G.edges(data=True)}
     nx.draw_networkx_edges(G, pos, width=edge_widths, alpha=0.9)
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=0)
